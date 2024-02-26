@@ -100,9 +100,9 @@ func main() {
 	order1 := tx_client.TradeRequest{
 		ClientOrderId: tx_client.GenerateRandomString(11),
 		OrderType:     tx_client.LIMIT_ORDER,
-		Price:         3300.412345678923456,
+		Price:         1.00,
 		Quantity:      0.00012,
-		Side:          tx_client.SELL_SIDE,
+		Side:          tx_client.BUY_SIDE,
 		Symbol:        "BTC/USD",
 		TimeInForce:   tx_client.FOK_TIME_IN_FORCE,
 	}
