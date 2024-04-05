@@ -15,6 +15,7 @@ import (
 	"github.com/falconxio/fix_tx_client/configs"
 	"github.com/falconxio/fix_tx_client/tx_client"
 	"github.com/quickfixgo/quickfix"
+	"github.com/quickfixgo/quickfix/store/file"
 )
 
 const (
@@ -82,7 +83,7 @@ func getTxClient() (*tx_client.TransactionClient, *quickfix.Initiator) {
 		os.Exit(1)
 	}
 
-	initiator, err := quickfix.NewInitiator(txApp, quickfix.NewMemoryStoreFactory(), settings, fileLogFactory)
+	initiator, err := quickfix.NewInitiator(txApp, file.NewStoreFactory(settings), settings, fileLogFactory)
 	if err != nil {
 		log.Printf("Unable to create Initiator: %s\n", err)
 		os.Exit(1)
@@ -118,4 +119,6 @@ func main() {
 	signal.Notify(quit, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
 
 	<-quit
+
+	initiator.Stop()
 }

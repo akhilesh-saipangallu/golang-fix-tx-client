@@ -30,6 +30,7 @@ func (LogonProcessor) process(logonMsg *quickfix.Message, apiKey string, passphr
 	rawDataField := field.NewRawData(rawData)
 	logonMsg.Body.Set(rawDataField)
 
-	resetOnLogon := field.NewResetSeqNumFlag(true)
-	logonMsg.Body.Set(resetOnLogon)
+	// *Note: Use this as needed
+	// resetOnLogon := field.NewResetSeqNumFlag(true)
+	// logonMsg.Body.Set(resetOnLogon)
 }
