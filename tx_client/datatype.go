@@ -24,7 +24,7 @@ const (
 	GTX_TIME_IN_FORCE TimeInForce = "5"
 )
 
-type TradeRequest struct {
+type OrderRequest struct {
 	ClientOrderId string
 	OrderType     OrderType
 	Price         float64

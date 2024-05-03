@@ -99,7 +99,7 @@ func main() {
 
 	// place order
 	var err error
-	order1 := tx_client.TradeRequest{
+	order1 := tx_client.OrderRequest{
 		ClientOrderId: tx_client.GenerateRandomString(11),
 		OrderType:     tx_client.LIMIT_ORDER,
 		Price:         59490.48,

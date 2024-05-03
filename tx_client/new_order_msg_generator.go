@@ -14,24 +14,24 @@ const ROUNDING_DECIMALS int32 = 8
 
 type NewOrderMsgGenerator struct{}
 
-func (NewOrderMsgGenerator) generate(tradeRequest TradeRequest) fix44nos.NewOrderSingle {
+func (NewOrderMsgGenerator) generate(orderRequest OrderRequest) fix44nos.NewOrderSingle {
 	request := fix44nos.New(
-		field.NewClOrdID(tradeRequest.ClientOrderId),
-		field.NewSide(enum.Side(tradeRequest.Side)),
+		field.NewClOrdID(orderRequest.ClientOrderId),
+		field.NewSide(enum.Side(orderRequest.Side)),
 		field.NewTransactTime(time.Now()),
-		field.OrdTypeField{FIXString: quickfix.FIXString(tradeRequest.OrderType)},
+		field.OrdTypeField{FIXString: quickfix.FIXString(orderRequest.OrderType)},
 	)
-	request.Set(field.NewSymbol(tradeRequest.Symbol))
+	request.Set(field.NewSymbol(orderRequest.Symbol))
 
-	quantityDecimal := decimal.NewFromFloat(tradeRequest.Quantity)
+	quantityDecimal := decimal.NewFromFloat(orderRequest.Quantity)
 	request.Set(field.NewOrderQty(quantityDecimal, ROUNDING_DECIMALS))
 
-	priceDecimal := decimal.NewFromFloat(tradeRequest.Price)
+	priceDecimal := decimal.NewFromFloat(orderRequest.Price)
 
-	if tradeRequest.OrderType == LIMIT_ORDER {
+	if orderRequest.OrderType == LIMIT_ORDER {
 		request.Set(field.NewPrice(priceDecimal, ROUNDING_DECIMALS))
 	}
-	request.Set(field.NewTimeInForce(enum.TimeInForce(tradeRequest.TimeInForce)))
+	request.Set(field.NewTimeInForce(enum.TimeInForce(orderRequest.TimeInForce)))
 
 	return request
 }
