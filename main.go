@@ -97,23 +97,56 @@ func main() {
 	defer initiator.Stop()
 	time.Sleep(5 * time.Second)
 
-	var orderPlacementErr error
-	order1 := tx_client.TradeRequest{
+	// place order
+	var err error
+	order1 := tx_client.OrderRequest{
 		ClientOrderId: tx_client.GenerateRandomString(11),
 		OrderType:     tx_client.LIMIT_ORDER,
-		Price:         1.00,
+		Price:         59490.48,
 		Quantity:      0.00012,
-		Side:          tx_client.BUY_SIDE,
+		Side:          tx_client.SELL_SIDE,
 		Symbol:        "BTC/USD",
 		TimeInForce:   tx_client.FOK_TIME_IN_FORCE,
 	}
 
-	if orderPlacementErr = txApp.PlaceNewOrder(initiator, order1); orderPlacementErr != nil {
-		log.Println("orderPlacementErr: ", orderPlacementErr)
+	if err = txApp.PlaceNewOrder(initiator, order1); err != nil {
+		log.Println("orderPlacementErr: ", err)
 		initiator.Stop()
 		os.Exit(1)
 	}
 	time.Sleep(5 * time.Second)
+
+	// cancel order
+	cancelRequest := tx_client.CancelOrderRequest{
+		OrigClientOrderId: order1.ClientOrderId,
+		ClientOrderId:     tx_client.GenerateRandomString(11),
+		Side:              tx_client.SELL_SIDE,
+		OrderId:           "orderId",
+	}
+	if err = txApp.CancelOrder(initiator, cancelRequest); err != nil {
+		log.Println("orderCancelErr: ", err)
+		initiator.Stop()
+		os.Exit(1)
+	}
+
+	// cancel replace
+	cancelReplaceRequest := tx_client.OrderReplaceRequest{
+		OrigClientOrderId: order1.ClientOrderId,
+		ClientOrderId:     tx_client.GenerateRandomString(11),
+		OrderId:           "orderId",
+		OrderType:         tx_client.LIMIT_ORDER,
+		Price:             59490.48,
+		Quantity:          0.00012,
+		Side:              tx_client.SELL_SIDE,
+		Symbol:            "BTC/USD",
+		TimeInForce:       tx_client.GTX_TIME_IN_FORCE,
+		ExpireTime:        time.Now().Add(10 * time.Minute),
+	}
+	if err = txApp.ReplaceOrder(initiator, cancelReplaceRequest); err != nil {
+		log.Println("orderCancelReplaceErr: ", err)
+		initiator.Stop()
+		os.Exit(1)
+	}
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)

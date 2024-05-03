@@ -47,7 +47,17 @@ func (tc TransactionClient) FromApp(msg *quickfix.Message, sessionID quickfix.Se
 	return
 }
 
-func (tc *TransactionClient) PlaceNewOrder(initiator *quickfix.Initiator, tradeRequest TradeRequest) error {
-	nosMsg := NewOrderMsgGenerator{}.generate(tradeRequest)
+func (tc *TransactionClient) PlaceNewOrder(initiator *quickfix.Initiator, orderRequest OrderRequest) error {
+	nosMsg := NewOrderMsgGenerator{}.generate(orderRequest)
 	return quickfix.SendToTarget(nosMsg, tc.SessionId)
+}
+
+func (tc *TransactionClient) ReplaceOrder(initiator *quickfix.Initiator, orderReplaceRequest OrderReplaceRequest) error {
+	nosMsg := OrderCancelReplaceMsgGenerator{}.generate(orderReplaceRequest)
+	return quickfix.SendToTarget(nosMsg, tc.SessionId)
+}
+
+func (tc *TransactionClient) CancelOrder(initiator *quickfix.Initiator, cancelRequest CancelOrderRequest) error {
+	msg := OrderCancelMsgGenerator{}.generate(cancelRequest)
+	return quickfix.SendToTarget(msg, tc.SessionId)
 }
