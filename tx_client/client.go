@@ -51,3 +51,13 @@ func (tc *TransactionClient) PlaceNewOrder(initiator *quickfix.Initiator, tradeR
 	nosMsg := NewOrderMsgGenerator{}.generate(tradeRequest)
 	return quickfix.SendToTarget(nosMsg, tc.SessionId)
 }
+
+func (tc *TransactionClient) ReplaceOrder(initiator *quickfix.Initiator, orderReplaceRequest OrderReplaceRequest) error {
+	nosMsg := OrderCancelReplaceMsgGenerator{}.generate(orderReplaceRequest)
+	return quickfix.SendToTarget(nosMsg, tc.SessionId)
+}
+
+func (tc *TransactionClient) CancelOrder(initiator *quickfix.Initiator, cancelRequest CancelOrderRequest) error {
+	msg := OrderCancelMsgGenerator{}.generate(cancelRequest)
+	return quickfix.SendToTarget(msg, tc.SessionId)
+}
